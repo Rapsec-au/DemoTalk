@@ -1,0 +1,21 @@
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+const firestore = admin.firestore();
+const realtimeDatabase = admin.database();
+
+exports.updateRealtimeDatabaseOnChange = functions.firestore
+    .document('device/9Dn3eTuuySDcT2LtQALN')
+    .onUpdate((change, context) => {
+        const newValue = change.after.data();
+        const relayOne = newValue.relayOne ? 1 : 0;
+        const relayTwo = newValue.relayTwo ? 1 : 0;
+
+        const updates = {
+            relayOne: relayOne,
+            relayTwo: relayTwo
+        };
+
+        return realtimeDatabase.ref('device').update(updates);
+    });
